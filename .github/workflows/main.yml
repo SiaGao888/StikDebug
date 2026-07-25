@@ -1,0 +1,39 @@
+name: Build StikDebug IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Select Xcode
+      run: |
+        sudo xcode-select -switch /Applications/Xcode.app
+
+    - name: Build Archive
+      run: |
+        xcodebuild \
+        -project StikDebug.xcodeproj \
+        -scheme StikDebug \
+        -configuration Release \
+        -archivePath build/StikDebug.xcarchive \
+        archive \
+        CODE_SIGNING_ALLOWED=NO
+
+    - name: Export IPA
+      run: |
+        mkdir Payload
+        cp -r build/StikDebug.xcarchive/Products/Applications/*.app Payload/
+
+        zip -r StikDebug.ipa Payload
+
+    - name: Upload IPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: StikDebug-IPA
+        path: StikDebug.ipa
