@@ -18,9 +18,9 @@ jobs:
 
 
       - name: 2. Configure Xcode Environment
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '15.4'
+  uses: maxim-lobanov/setup-xcode@v1
+  with:
+    xcode-version: '15.4'
 
 
       - name: 3. Show Xcode
