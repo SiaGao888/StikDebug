@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
     - name: Checkout
@@ -13,22 +13,26 @@ jobs:
 
     - name: Select Xcode
       run: |
-        sudo xcode-select -switch /Applications/Xcode.app
+        sudo xcode-select -s /Applications/Xcode.app
+
+    - name: Resolve packages
+      run: |
+        xcodebuild -resolvePackageDependencies \
+        -project StikDebug.xcodeproj
 
     - name: Build Archive
       run: |
-        xcodebuild \
+        xcodebuild archive \
         -project StikDebug.xcodeproj \
         -scheme StikDebug \
-        -configuration Release \
         -archivePath build/StikDebug.xcarchive \
-        archive \
-        CODE_SIGNING_ALLOWED=NO
+        CODE_SIGNING_ALLOWED=NO \
+        CODE_SIGNING_REQUIRED=NO
 
-    - name: Export IPA
+    - name: Create IPA
       run: |
         mkdir Payload
-        cp -r build/StikDebug.xcarchive/Products/Applications/*.app Payload/
+        cp -R build/StikDebug.xcarchive/Products/Applications/StikDebug.app Payload/
 
         zip -r StikDebug.ipa Payload
 
